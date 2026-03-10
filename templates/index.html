@@ -1217,6 +1217,7 @@
     .theme-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
+      align-items: start;
       gap: 8px;
     }
 
@@ -1250,24 +1251,25 @@
       opacity: 1;
     }
 
+    /* Theme swatches — 3 real palette colors: bg / surface / accent */
     .swatch-dark {
-      background: #0d0f14;
+      background: linear-gradient(to right, #0d0f14 0% 33%, #1a1e29 33% 66%, #5b9fff 66% 100%);
     }
 
     .swatch-light {
-      background: #f0f2f8;
+      background: linear-gradient(to right, #f0f2f8 0% 33%, #ffffff 33% 66%, #3d7bdb 66% 100%);
     }
 
     .swatch-amoled {
-      background: #000000;
+      background: linear-gradient(to right, #000000 0% 33%, #111111 33% 66%, #a78bff 66% 100%);
     }
 
     .swatch-forest {
-      background: #0d1410;
+      background: linear-gradient(to right, #0d1410 0% 33%, #121a14 33% 66%, #4ecb71 66% 100%);
     }
 
     .swatch-sunset {
-      background: #150d14;
+      background: linear-gradient(to right, #150d14 0% 33%, #1e1018 33% 66%, #ff7eb3 66% 100%);
     }
 
     .theme-label {
@@ -1586,6 +1588,838 @@
       width: 0%;
       transition: width 0.3s, background 0.3s;
     }
+
+    /* ══════════════════════════════════════
+       MESSAGE ACTIONS (hover toolbar)
+    ══════════════════════════════════════ */
+
+    .msg {
+      position: relative;
+    }
+
+    .msg:hover .msg-actions {
+      opacity: 1;
+    }
+
+    .msg-actions {
+      position: absolute;
+      right: 0;
+      top: -4px;
+      display: flex;
+      gap: 2px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 3px 4px;
+      opacity: 0;
+      transition: opacity 0.15s;
+      z-index: 10;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .msg-action-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      padding: 3px 5px;
+      border-radius: 5px;
+      transition: background 0.12s;
+      line-height: 1;
+    }
+
+    .msg-action-btn:hover {
+      background: var(--surface2);
+    }
+
+    /* ══════════════════════════════════════
+       REACTIONS
+    ══════════════════════════════════════ */
+
+    .msg-reactions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 4px;
+    }
+
+    .reaction-chip {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2px 7px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.12s;
+      user-select: none;
+    }
+
+    .reaction-chip:hover {
+      border-color: rgba(91, 159, 255, 0.4);
+      background: var(--surface3);
+    }
+
+    .reaction-chip.mine {
+      background: rgba(91, 159, 255, 0.12);
+      border-color: rgba(91, 159, 255, 0.35);
+    }
+
+    .reaction-chip .reaction-count {
+      font-size: 11px;
+      font-family: 'DM Mono', monospace;
+      color: var(--muted);
+    }
+
+    .reaction-picker {
+      position: absolute;
+      right: 0;
+      top: 28px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 6px 8px;
+      display: flex;
+      gap: 4px;
+      z-index: 50;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      animation: dropIn 0.12s ease-out;
+    }
+
+    .reaction-picker-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 18px;
+      padding: 4px;
+      border-radius: 6px;
+      transition: background 0.1s, transform 0.1s;
+      line-height: 1;
+    }
+
+    .reaction-picker-btn:hover {
+      background: var(--surface2);
+      transform: scale(1.2);
+    }
+
+    /* ══════════════════════════════════════
+       REPLY
+    ══════════════════════════════════════ */
+
+    .reply-bar {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      background: var(--surface2);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 6px;
+      font-size: 12px;
+    }
+
+    .reply-bar.visible {
+      display: flex;
+    }
+
+    .reply-bar-text {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--muted);
+    }
+
+    .reply-bar-name {
+      font-weight: 700;
+      color: var(--accent);
+      margin-right: 4px;
+    }
+
+    .reply-bar-close {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 16px;
+      padding: 0;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .msg-reply-ref {
+      background: var(--surface2);
+      border-left: 3px solid var(--accent2);
+      border-radius: 0 6px 6px 0;
+      padding: 4px 10px;
+      margin-bottom: 4px;
+      font-size: 11px;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .msg-reply-ref-name {
+      font-weight: 700;
+      color: var(--accent2);
+    }
+
+    /* ══════════════════════════════════════
+       EDIT MESSAGE
+    ══════════════════════════════════════ */
+
+    .msg-edit-wrap {
+      display: none;
+      margin-top: 4px;
+    }
+
+    .msg-edit-wrap.visible {
+      display: flex;
+      gap: 6px;
+      align-items: flex-end;
+    }
+
+    .msg-edit-input {
+      flex: 1;
+      background: var(--surface2);
+      border: 1px solid rgba(91, 159, 255, 0.4);
+      border-radius: 8px;
+      padding: 7px 12px;
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      color: var(--text);
+      outline: none;
+      resize: none;
+    }
+
+    .msg-edit-save {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      padding: 7px 12px;
+      font-family: 'Syne', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .msg-edit-cancel {
+      background: var(--surface2);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 7px 10px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .msg-deleted {
+      color: var(--muted);
+      font-style: italic;
+      font-size: 13px;
+    }
+
+    .msg-edited-tag {
+      font-size: 10px;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      margin-left: 4px;
+    }
+
+    /* ══════════════════════════════════════
+       IMAGE UPLOAD
+    ══════════════════════════════════════ */
+
+    .btn-attach {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 10px;
+      padding: 0 12px;
+      height: 42px;
+      font-size: 17px;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+    }
+
+    .btn-attach:hover {
+      color: var(--text);
+      border-color: rgba(91, 159, 255, 0.35);
+    }
+
+    .msg-image {
+      max-width: 320px;
+      max-height: 240px;
+      border-radius: 10px;
+      margin-top: 6px;
+      cursor: pointer;
+      transition: opacity 0.15s;
+      border: 1px solid var(--border);
+    }
+
+    .msg-image:hover {
+      opacity: 0.9;
+    }
+
+    /* Image lightbox */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 300;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+
+    .lightbox.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .lightbox img {
+      max-width: 90vw;
+      max-height: 90vh;
+      border-radius: 12px;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.8);
+    }
+
+    /* ══════════════════════════════════════
+       USER STATUS
+    ══════════════════════════════════════ */
+
+    .status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      border: 2px solid var(--surface);
+      position: absolute;
+      bottom: -1px;
+      right: -1px;
+      flex-shrink: 0;
+    }
+
+    .status-online {
+      background: var(--green);
+    }
+
+    .status-away {
+      background: #ffaa5b;
+    }
+
+    .status-dnd {
+      background: var(--red);
+    }
+
+    .status-offline {
+      background: var(--muted);
+    }
+
+    .status-menu {
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 4px;
+      min-width: 180px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      z-index: 200;
+      animation: dropIn 0.12s ease-out;
+    }
+
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      transition: background 0.12s;
+      border: none;
+      background: none;
+      width: 100%;
+      font-family: 'Syne', sans-serif;
+    }
+
+    .status-item:hover {
+      background: var(--surface2);
+    }
+
+    /* ══════════════════════════════════════
+       DM — DIRECT MESSAGES
+    ══════════════════════════════════════ */
+
+    .dm-section {
+      border-top: 1px solid var(--border);
+      padding: 8px;
+    }
+
+    .dm-section-title {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 4px 6px 8px;
+    }
+
+    .dm-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.12s;
+      position: relative;
+    }
+
+    .dm-item:hover {
+      background: var(--surface2);
+    }
+
+    .dm-item.active {
+      background: rgba(167, 139, 255, 0.1);
+      border: 1px solid rgba(167, 139, 255, 0.2);
+    }
+
+    .dm-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .dm-name {
+      font-size: 13px;
+      font-weight: 600;
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .dm-badge {
+      background: var(--red);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      border-radius: 10px;
+      padding: 1px 6px;
+      min-width: 18px;
+      text-align: center;
+      font-family: 'DM Mono', monospace;
+    }
+
+    /* DM Panel (replaces chat panel when DM is open) */
+    .dm-topbar-name {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    /* ══════════════════════════════════════
+       NOTIFICATIONS BADGE on room items
+    ══════════════════════════════════════ */
+
+    .room-unread-badge {
+      background: var(--accent);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      border-radius: 10px;
+      padding: 1px 6px;
+      min-width: 18px;
+      text-align: center;
+      font-family: 'DM Mono', monospace;
+      flex-shrink: 0;
+    }
+
+    /* ══════════════════════════════════════
+       NOTIFICATION TOAST
+    ══════════════════════════════════════ */
+
+    .notif-toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      max-width: 320px;
+      animation: toastIn 0.25s ease-out;
+      cursor: pointer;
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .notif-toast-icon {
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .notif-toast-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .notif-toast-title {
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .notif-toast-text {
+      font-size: 12px;
+      color: var(--muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* ══════════════════════════════════════
+       @MENTION highlight
+    ══════════════════════════════════════ */
+
+    .mention {
+      background: rgba(91, 159, 255, 0.15);
+      color: var(--accent);
+      border-radius: 4px;
+      padding: 0 3px;
+      font-weight: 700;
+    }
+
+    .msg.mentioned {
+      background: rgba(91, 159, 255, 0.05);
+      border-radius: 8px;
+      padding: 6px 8px;
+      margin: -6px -8px;
+      border-left: 3px solid var(--accent);
+    }
+
+    /* ══════════════════════════════════════
+       UNIQUE AVATARS — gradient combos
+    ══════════════════════════════════════ */
+
+    .avatar-gradient-0 {
+      background: linear-gradient(135deg, #5b9fff, #3d7bdb);
+    }
+
+    .avatar-gradient-1 {
+      background: linear-gradient(135deg, #a78bff, #7c5cbf);
+    }
+
+    .avatar-gradient-2 {
+      background: linear-gradient(135deg, #3effa3, #18a96a);
+    }
+
+    .avatar-gradient-3 {
+      background: linear-gradient(135deg, #ff9f5b, #e07830);
+    }
+
+    .avatar-gradient-4 {
+      background: linear-gradient(135deg, #ff5f9f, #c0392b);
+    }
+
+    .avatar-gradient-5 {
+      background: linear-gradient(135deg, #5bfff3, #00b4aa);
+    }
+
+    .avatar-gradient-6 {
+      background: linear-gradient(135deg, #ffdd57, #e6a817);
+    }
+
+    .avatar-gradient-7 {
+      background: linear-gradient(135deg, #ff6b6b, #c0392b);
+    }
+
+    .avatar-gradient-8 {
+      background: linear-gradient(135deg, #a8ff78, #78ffd6);
+    }
+
+    .avatar-gradient-9 {
+      background: linear-gradient(135deg, #f093fb, #f5576c);
+    }
+
+    /* ══════════════════════════════════════
+       USERS LIST MODAL
+    ══════════════════════════════════════ */
+
+    .users-modal-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      max-height: 360px;
+      overflow-y: auto;
+    }
+
+    .users-modal-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      transition: background 0.12s;
+    }
+
+    .users-modal-item:hover {
+      background: var(--surface2);
+    }
+
+    .users-modal-dm-btn {
+      margin-left: auto;
+      background: rgba(167, 139, 255, 0.12);
+      border: 1px solid rgba(167, 139, 255, 0.25);
+      color: var(--accent2);
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .users-modal-dm-btn:hover {
+      background: rgba(167, 139, 255, 0.25);
+    }
+
+    /* Pinned message banner */
+    .pinned-banner {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 16px;
+      background: rgba(91, 159, 255, 0.08);
+      border-bottom: 1px solid rgba(91, 159, 255, 0.15);
+      font-size: 12px;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .pinned-banner.visible {
+      display: flex;
+    }
+
+    .pinned-banner-text {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .pinned-banner-label {
+      font-weight: 700;
+      color: var(--accent);
+      margin-right: 4px;
+    }
+
+
+    /* ══════════════════════════════════════
+       CONTEXT MENU
+    ══════════════════════════════════════ */
+
+    .ctx-menu {
+      position: fixed;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 4px;
+      min-width: 190px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+      z-index: 1000;
+      animation: dropIn 0.1s ease-out;
+    }
+
+    .ctx-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 8px 12px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      transition: background 0.1s;
+      border: none;
+      background: none;
+      width: 100%;
+      font-family: 'Syne', sans-serif;
+      text-align: left;
+    }
+
+    .ctx-item:hover {
+      background: var(--surface2);
+    }
+
+    .ctx-item.danger {
+      color: var(--red);
+    }
+
+    .ctx-item.danger:hover {
+      background: rgba(255, 95, 126, 0.1);
+    }
+
+    .ctx-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 3px 0;
+    }
+
+    .ctx-reactions {
+      display: flex;
+      gap: 2px;
+      padding: 6px 8px;
+      flex-wrap: wrap;
+    }
+
+    .ctx-reaction-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 19px;
+      padding: 4px 5px;
+      border-radius: 6px;
+      transition: background 0.1s, transform 0.1s;
+      line-height: 1;
+    }
+
+    .ctx-reaction-btn:hover {
+      background: var(--surface2);
+      transform: scale(1.25);
+    }
+
+
+    .btn-room-restore {
+      background: rgba(62, 255, 163, 0.1);
+      border: 1px solid rgba(62, 255, 163, 0.25);
+      color: var(--green);
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'Syne', sans-serif;
+      transition: all 0.12s;
+      white-space: nowrap;
+    }
+
+    .btn-room-restore:hover {
+      background: rgba(62, 255, 163, 0.2);
+    }
+
+    .btn-room-delete {
+      background: rgba(255, 95, 126, 0.1);
+      border: 1px solid rgba(255, 95, 126, 0.25);
+      color: var(--red);
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'Syne', sans-serif;
+      transition: all 0.12s;
+      white-space: nowrap;
+    }
+
+    .btn-room-delete:hover {
+      background: rgba(255, 95, 126, 0.2);
+    }
+
+
+    /* ══════════════════════════════════════
+       SCREEN SHARE
+    ══════════════════════════════════════ */
+
+    .btn-screen {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 10px;
+      padding: 6px 14px;
+      font-family: 'Syne', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .btn-screen:hover {
+      color: var(--text);
+      border-color: rgba(91, 159, 255, 0.35);
+    }
+
+    .btn-screen.screen-on {
+      background: rgba(255, 95, 126, 0.12);
+      border-color: rgba(255, 95, 126, 0.4);
+      color: var(--red);
+      animation: screenPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes screenPulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(255, 95, 126, 0);
+      }
+
+      50% {
+        box-shadow: 0 0 0 4px rgba(255, 95, 126, 0.2);
+      }
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.3;
+      }
+    }
   </style>
 </head>
 
@@ -1730,6 +2564,15 @@
       </div>
 
       <!-- Archive section -->
+      <!-- Hidden rooms -->
+      <div id="hiddenSection" style="display:none;">
+        <div class="archive-header" onclick="toggleHiddenList()" style="cursor:pointer;">
+          <span>🙈 Скрытые</span>
+          <span id="hiddenChevron">›</span>
+        </div>
+        <div id="hiddenList" style="display:none;"></div>
+      </div>
+
       <div id="archiveSection" style="display:none;">
         <div class="archive-toggle" id="archiveToggle" onclick="toggleArchive()">
           <span>🗄</span>
@@ -1756,7 +2599,18 @@
           <button onclick="showProfileModal()"
             style="background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 4px 7px; cursor: pointer; font-size: 12px; color: var(--muted); transition: all 0.15s;"
             title="Профиль">👤</button>
+          <button onclick="openStatusMenu(this.parentElement)"
+            style="background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 4px 7px; cursor: pointer; font-size: 11px; color: var(--muted); transition: all 0.15s;"
+            title="Статус">●</button>
         </div>
+      </div>
+    </div>
+
+    <!-- DM Section -->
+    <div class="dm-section">
+      <div class="dm-section-title">💌 Личные сообщения</div>
+      <div id="dmList">
+        <div style="font-size:12px;color:var(--muted);padding:4px 8px;">Нет переписок</div>
       </div>
     </div>
 
@@ -1775,16 +2629,62 @@
         <div class="chat-topbar">
           <div class="chat-topbar-left">
             <div class="chat-room-name" id="topRoomName"></div>
+            <span id="adminBadge"
+              style="display:none;align-items:center;gap:3px;background:rgba(255,185,0,0.12);border:1px solid rgba(255,185,0,0.3);color:#ffb900;border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700;letter-spacing:.05em;">👑
+              ADMIN</span>
             <div class="chat-room-badge" id="topOnline"></div>
           </div>
           <div class="chat-topbar-right">
+            <button class="btn"
+              style="background:var(--surface2);border:1px solid var(--border);color:var(--muted);padding:6px 12px;font-size:12px;"
+              onclick="showUsersModal()">👥 Участники</button>
             <button class="btn btn-mic" id="micBtn"></button>
+            <button class="btn btn-screen" id="screenBtn" title="Демонстрация экрана" onclick="toggleScreen()">🖥
+              Показать экран</button>
             <button class="btn btn-leave" id="leaveBtn" data-i18n="leave"></button>
           </div>
         </div>
 
         <div class="users-strip" id="usersStrip">
           <span class="strip-label" data-i18n="in_room"></span>
+        </div>
+
+        <!-- Pinned message banner -->
+        <div class="pinned-banner" id="pinnedBanner">
+          <span style="cursor:pointer;flex:1;display:flex;align-items:center;gap:8px;"
+            onclick="pinnedMsg && scrollToMsg(pinnedMsg.msgId)">
+            <span>📌</span>
+            <span><span class="pinned-banner-label">Закреплено:</span><span class="pinned-banner-text"
+                id="pinnedBannerText"></span></span>
+          </span>
+          <button onclick="unpinMessage()"
+            style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:15px;padding:0 4px;line-height:1;flex-shrink:0;"
+            title="Открепить">✕</button>
+        </div>
+
+        <!-- Screen share viewer -->
+        <div id="screenViewer"
+          style="display:none;flex-direction:column;background:var(--surface2);border-bottom:1px solid var(--border);">
+          <div
+            style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-bottom:1px solid var(--border);">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span
+                style="width:8px;height:8px;background:var(--red);border-radius:50%;animation:pulse 1s infinite;display:inline-block;"></span>
+              <span id="screenSharerName" style="font-size:13px;font-weight:700;"></span>
+              <span style="font-size:12px;color:var(--muted);">демонстрирует экран</span>
+            </div>
+            <div style="display:flex;gap:6px;">
+              <button id="screenFullBtn" onclick="toggleScreenFull()"
+                style="background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:7px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;">⛶
+                На весь экран</button>
+              <button onclick="stopWatchingScreen()"
+                style="background:rgba(255,95,126,0.1);border:1px solid rgba(255,95,126,0.25);color:var(--red);border-radius:7px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;">✕
+                Скрыть</button>
+            </div>
+          </div>
+          <video id="screenVideo" autoplay playsinline
+            style="width:100%;max-height:320px;object-fit:contain;background:#000;cursor:pointer;"
+            ondblclick="toggleScreenFull()"></video>
         </div>
 
         <div id="chat">
@@ -1795,7 +2695,16 @@
         </div>
 
         <div class="input-bar">
+          <!-- Reply bar -->
+          <div class="reply-bar" id="replyBar">
+            <span>↩ <span class="reply-bar-name" id="replyBarName"></span></span>
+            <span class="reply-bar-text" id="replyBarText"></span>
+            <button class="reply-bar-close" onclick="clearReply()">✕</button>
+          </div>
           <div class="text-row">
+            <label class="btn-attach" title="Прикрепить картинку" style="cursor:pointer;">
+              📎<input type="file" accept="image/*" style="display:none;" onchange="handleImageUpload(this.files[0])" />
+            </label>
             <textarea id="msgText" data-i18n-ph="write_msg" rows="1"></textarea>
             <button class="btn btn-send" id="sendBtn" data-i18n="send"></button>
           </div>
@@ -2211,7 +3120,7 @@
 
     // ── Войти в приложение после авторизации ──
 
-    function enterApp(user) {
+    async function enterApp(user) {
       currentUser = user;
       updateProfileUI();
 
@@ -2220,8 +3129,12 @@
       document.getElementById("landing").classList.add("hidden");
       document.getElementById("app").classList.remove("hidden");
 
-      loadRooms();
+      // Load rooms AFTER currentUser is set so isOwner check works
+      await loadRooms();
+      renderRooms();  // re-render now that currentUser is definitely set
       fetchTurnCredentials();
+      requestNotifPermission();
+      setTimeout(updateAllStatusDots, 100);
     }
 
     function updateProfileUI() {
@@ -2641,7 +3554,29 @@
     const socket = io();
     let myId = null;
     let currentRoom = null;
+    let currentRoomCreator = null;
     let allRooms = [];
+    let hiddenRooms = (() => {
+      try { return new Set(JSON.parse(localStorage.getItem('voix_hidden_rooms') || '[]')); }
+      catch (e) { return new Set(); }
+    })();
+
+    function saveHiddenRooms() {
+      localStorage.setItem('voix_hidden_rooms', JSON.stringify([...hiddenRooms]));
+    }
+
+    function hideRoomLocally(name) {
+      hiddenRooms.add(name);
+      saveHiddenRooms();
+      if (currentRoom === name) leaveRoom();
+      renderRooms();
+    }
+
+    function unhideRoomLocally(name) {
+      hiddenRooms.delete(name);
+      saveHiddenRooms();
+      renderRooms();
+    }
     let pendingJoinRoom = null;
     const peers = {};
     let localStream = null;
@@ -2669,7 +3604,38 @@
     const topOnline = document.getElementById("topOnline");
     const usersStrip = document.getElementById("usersStrip");
     const chat = document.getElementById("chat");
+
+    // Click on reply reference — scroll to original
+    chat.addEventListener("click", e => {
+      const ref = e.target.closest(".msg-reply-ref");
+      if (ref) {
+        const refId = ref.getAttribute("data-refid");
+        if (refId) scrollToMsg(refId);
+      }
+    });
+
+    // Context menu via event delegation
+    chat.addEventListener("contextmenu", e => {
+      e.preventDefault();
+      const msgEl = e.target.closest(".msg");
+      if (!msgEl) return;
+      try {
+        const msgId = msgEl.id.replace("msg_", "");
+        const textEl = msgEl.querySelector(".msg-text");
+        const text = textEl ? textEl.textContent.trim() : "";
+        const authorEl = msgEl.querySelector(".msg-author");
+        const name = authorEl ? authorEl.textContent.trim() : "";
+        const isMe = msgEl.dataset.isMe === '1';
+        openCtxMenu(e, msgId, isMe, name, text);
+      } catch (err) {
+        console.error('[ctxmenu error]', err);
+      }
+    });
     const msgText = document.getElementById("msgText");
+    msgText.addEventListener("input", () => {
+      msgText.style.height = "auto";
+      msgText.style.height = Math.min(msgText.scrollHeight, 120) + "px";
+    });
     const sendBtn = document.getElementById("sendBtn");
     const micBtn = document.getElementById("micBtn");
     const leaveBtn = document.getElementById("leaveBtn");
@@ -2712,6 +3678,11 @@
       return currentUser ? currentUser.username : "Anon";
     }
 
+
+    function isRoomAdmin() {
+      return currentUser != null && currentRoomCreator != null &&
+        Number(currentRoomCreator) === Number(currentUser.id);
+    }
     function myColor() {
       return currentUser ? currentUser.color : "#5b9fff";
     }
@@ -2725,47 +3696,7 @@
       chat.scrollTop = chat.scrollHeight;
     }
 
-    function addMsg(data) {
-      if (chatEmpty) { chat.innerHTML = ""; chatEmpty = false; }
-      const isMe = data.id === myId;
-      const d = document.createElement("div");
-      d.className = "msg";
 
-      const av = document.createElement("div");
-      av.className = "msg-avatar";
-      av.textContent = getInitial(data.name || "?");
-      av.style.color = "#fff";
-      av.style.background = isMe ? myColor() : (data.color || getColor(data.id || "x"));
-
-      const body = document.createElement("div");
-      body.className = "msg-body";
-
-      const meta = document.createElement("div");
-      meta.className = "msg-meta";
-
-      const author = document.createElement("span");
-      author.className = "msg-author";
-      author.textContent = isMe ? myName() : (data.name || "Anon");
-      author.style.color = isMe ? myColor() : (data.color || getColor(data.id || "x"));
-
-      const time = document.createElement("span");
-      time.className = "msg-time";
-      time.textContent = data.time || formatTime();
-
-      meta.appendChild(author);
-      meta.appendChild(time);
-
-      const txt = document.createElement("div");
-      txt.className = "msg-text";
-      txt.textContent = data.text;
-
-      body.appendChild(meta);
-      body.appendChild(txt);
-      d.appendChild(av);
-      d.appendChild(body);
-      chat.appendChild(d);
-      chat.scrollTop = chat.scrollHeight;
-    }
 
     function updateMicBtn() {
       if (!micBtn) return;
@@ -2805,9 +3736,11 @@
       const active = allRooms.filter(r => !r.archived);
       const archived = allRooms.filter(r => r.archived);
 
+      const visible = active.filter(r => !hiddenRooms.has(r.name));
+      const hidden = active.filter(r => hiddenRooms.has(r.name));
       const filtered = q
-        ? active.filter(r => r.name.toLowerCase().includes(q))
-        : active;
+        ? visible.filter(r => r.name.toLowerCase().includes(q))
+        : visible;
 
       // Active rooms
       if (!filtered.length) {
@@ -2815,6 +3748,28 @@
       } else {
         roomsList.innerHTML = "";
         filtered.forEach(r => roomsList.appendChild(buildRoomItem(r, false)));
+      }
+
+      // Hidden rooms section
+      const hiddenSection = document.getElementById('hiddenSection');
+      const hiddenList = document.getElementById('hiddenList');
+      if (hiddenSection && hiddenList) {
+        if (hidden.length) {
+          hiddenSection.style.display = 'block';
+          hiddenList.innerHTML = '';
+          hidden.forEach(r => {
+            const row = document.createElement('div');
+            row.className = 'room-item';
+            row.style.cssText = 'opacity:.5;';
+            row.innerHTML = `<div class="room-item-header">
+              <div class="room-item-name" style="flex:1;">#${r.name}</div>
+              <button class="btn-room-restore" style="font-size:10px;padding:2px 7px;" onclick="unhideRoomLocally('${r.name}')">👁 Вернуть</button>
+            </div>`;
+            hiddenList.appendChild(row);
+          });
+        } else {
+          hiddenSection.style.display = 'none';
+        }
       }
 
       // Archive section
@@ -2830,7 +3785,7 @@
     }
 
     function buildRoomItem(r, isArchived) {
-      const isOwner = currentUser && r.created_by === currentUser.id;
+      const isOwner = currentUser && Number(r.created_by) === Number(currentUser.id);
 
       const item = document.createElement("div");
       item.className = "room-item" +
@@ -2843,42 +3798,54 @@
       const nameEl = document.createElement("div");
       nameEl.className = "room-item-name";
       nameEl.textContent = "#" + r.name;
+      if (isArchived) {
+        const archTag = document.createElement('span');
+        archTag.style.cssText = 'font-size:9px;font-weight:700;letter-spacing:.06em;background:rgba(255,255,255,.08);color:var(--muted);border-radius:4px;padding:1px 5px;margin-left:5px;vertical-align:middle;';
+        archTag.textContent = 'АРХИВ';
+        nameEl.appendChild(archTag);
+      }
+      // Unread badge
+      if (unreadCounts[r.name]) {
+        const badge = document.createElement('span');
+        badge.className = 'room-unread-badge';
+        badge.textContent = unreadCounts[r.name];
+        header.appendChild(badge);
+      }
 
       header.appendChild(nameEl);
 
-      // ⋯ кнопка — только для создателя
+      // ⋯ кнопка — для создателя комнаты
+      // Debug: log comparison to catch type mismatch
+      if (currentUser) {
+        console.debug('[room]', r.name, 'created_by:', r.created_by, typeof r.created_by,
+          'myId:', currentUser.id, typeof currentUser.id, 'isOwner:', isOwner);
+      }
+
+      // ⋯ button: owners get full menu, everyone gets hide option
+      if (!isArchived) {
+        const menuBtn = document.createElement("button");
+        menuBtn.className = "btn-room-menu";
+        menuBtn.textContent = "⋯";
+        menuBtn.title = "Настройки";
+        menuBtn.onclick = e => { e.stopPropagation(); openRoomMenu(r, isArchived, menuBtn, isOwner); };
+        header.appendChild(menuBtn);
+      }
+
       if (isOwner) {
         if (isArchived) {
-          // Direct buttons for archived rooms
           const restoreBtn = document.createElement("button");
           restoreBtn.className = "btn-room-restore";
-          restoreBtn.innerHTML = "📤";
-          restoreBtn.title = "Восстановить";
-          restoreBtn.onclick = e => {
-            e.stopPropagation();
-            doArchiveRoom(r.name, false);
-          };
+          restoreBtn.innerHTML = "📤 Вернуть";
+          restoreBtn.title = "Восстановить комнату";
+          restoreBtn.onclick = e => { e.stopPropagation(); doArchiveRoom(r.name, false); };
           header.appendChild(restoreBtn);
 
           const deleteBtn = document.createElement("button");
           deleteBtn.className = "btn-room-delete";
-          deleteBtn.innerHTML = "🗑";
-          deleteBtn.title = "Удалить";
-          deleteBtn.onclick = e => {
-            e.stopPropagation();
-            confirmDeleteRoom(r.name);
-          };
+          deleteBtn.innerHTML = "🗑 Удалить";
+          deleteBtn.title = "Удалить навсегда";
+          deleteBtn.onclick = e => { e.stopPropagation(); confirmDeleteRoom(r.name); };
           header.appendChild(deleteBtn);
-        } else {
-          const menuBtn = document.createElement("button");
-          menuBtn.className = "btn-room-menu";
-          menuBtn.textContent = "⋯";
-          menuBtn.title = "Настройки комнаты";
-          menuBtn.onclick = e => {
-            e.stopPropagation();
-            openRoomMenu(r, isArchived, menuBtn);
-          };
-          header.appendChild(menuBtn);
         }
       }
 
@@ -2889,11 +3856,13 @@
       item.appendChild(header);
       item.appendChild(lastEl);
 
-      // Архивированные комнаты не открываются кликом
+      // Archived rooms can still be opened (read-only view)
       if (!isArchived) {
         item.onclick = () => selectRoom(r.name);
       } else {
-        item.style.cursor = "default";
+        // archived — click to open read-only, but don't send messages
+        item.style.cursor = "pointer";
+        item.onclick = () => selectRoom(r.name);
       }
 
       return item;
@@ -2903,7 +3872,7 @@
 
     let activeDropdown = null;
 
-    function openRoomMenu(room, isArchived, anchorBtn) {
+    function openRoomMenu(room, isArchived, anchorBtn, isOwner) {
       closeRoomMenu();
 
       const dropdown = document.createElement("div");
@@ -2936,18 +3905,42 @@
       divider.className = "room-dropdown-divider";
       dropdown.appendChild(divider);
 
-      const deleteItem = document.createElement("button");
-      deleteItem.className = "room-dropdown-item danger";
-      deleteItem.innerHTML = "🗑 Удалить комнату";
-      deleteItem.onclick = e => {
+      if (isOwner) {
+        const deleteItem = document.createElement("button");
+        deleteItem.className = "room-dropdown-item danger";
+        deleteItem.innerHTML = "🗑 Удалить комнату";
+        deleteItem.onclick = e => {
+          e.stopPropagation();
+          closeRoomMenu();
+          confirmDeleteRoom(room.name);
+        };
+        dropdown.appendChild(deleteItem);
+      }
+
+      // Everyone can hide a room from their own sidebar
+      const divHide = document.createElement("div");
+      divHide.className = "room-dropdown-divider";
+      dropdown.appendChild(divHide);
+
+      const hideItem = document.createElement("button");
+      hideItem.className = "room-dropdown-item";
+      hideItem.innerHTML = "🙈 Скрыть у себя";
+      hideItem.title = "Убрать из списка (только для тебя)";
+      hideItem.onclick = e => {
         e.stopPropagation();
         closeRoomMenu();
-        confirmDeleteRoom(room.name);
+        hideRoomLocally(room.name);
       };
-      dropdown.appendChild(deleteItem);
+      dropdown.appendChild(hideItem);
 
       anchorBtn.closest(".room-item").appendChild(dropdown);
       activeDropdown = dropdown;
+      // Flip up if dropdown goes below viewport
+      const rect = dropdown.getBoundingClientRect();
+      if (rect.bottom > window.innerHeight) {
+        dropdown.style.top = 'auto';
+        dropdown.style.bottom = '100%';
+      }
 
       // Закрыть при клике вне
       setTimeout(() => {
@@ -2965,6 +3958,15 @@
     // ── Archive toggle ──
 
     let archiveOpen = false;
+    function toggleHiddenList() {
+      const list = document.getElementById('hiddenList');
+      const chev = document.getElementById('hiddenChevron');
+      if (!list) return;
+      const open = list.style.display !== 'none';
+      list.style.display = open ? 'none' : 'block';
+      if (chev) chev.textContent = open ? '›' : '⌄';
+    }
+
     function toggleArchive() {
       archiveOpen = !archiveOpen;
       document.getElementById("archiveList").classList.toggle("open", archiveOpen);
@@ -3035,7 +4037,11 @@
 
       if (res.status === 403) {
         pendingJoinRoom = name;
-        openJoinModal(name);
+        joinRoomLabel.textContent = name;
+        joinRoomPass.value = "";
+        joinError.textContent = "";
+        joinModal.classList.add("visible");
+        setTimeout(() => joinRoomPass.focus(), 100);
         return;
       }
 
@@ -3049,8 +4055,18 @@
       }
 
       currentRoom = name;
+      clearUnread(name);
+      // Store room creator id for admin checks
+      const roomObj = allRooms.find(r => r.name === name);
+      currentRoomCreator = roomObj ? roomObj.created_by : null;
       prevUserIds = new Set();
       topRoomName.textContent = "#" + name;
+      // Show/hide admin badge
+      const adminBadge = document.getElementById('adminBadge');
+      if (adminBadge) {
+        // eslint-disable-next-line eqeqeq
+        adminBadge.style.display = (currentUser && roomObj && roomObj.created_by == currentUser.id) ? 'inline-flex' : 'none';
+      }
       noRoom.style.display = "none";
       roomView.style.display = "flex";
       chat.innerHTML = "";
@@ -3059,7 +4075,7 @@
       if (data.history && data.history.length) {
         chatEmpty = false;
         data.history.forEach(m => addMsg({
-          id: "history",
+          id: m.author === myName() ? myId : "history_other",
           name: m.author,
           text: m.text,
           time: new Date(m.created_at).toLocaleTimeString("ru", { hour: "2-digit", minute: "2-digit" }),
@@ -3180,22 +4196,998 @@
       if (e.key === "Enter") document.getElementById("joinByNameOk").click();
     });
 
+
+    // ══════════════════════════════════════
+    // UNIQUE AVATAR GRADIENTS
+    // ══════════════════════════════════════
+
+    function getAvatarClass(userId) {
+      let h = 0;
+      const str = String(userId || '');
+      for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) % 10;
+      return 'avatar-gradient-' + h;
+    }
+
+    function setAvatarStyle(el, userId, name) {
+      el.className = (el.className || '').replace(/avatar-gradient-\d/g, '').trim();
+      el.classList.add(getAvatarClass(userId));
+      el.textContent = (name || '?')[0].toUpperCase();
+      el.style.background = '';
+    }
+
+    // ══════════════════════════════════════
+    // STATUS
+    // ══════════════════════════════════════
+
+    let myStatus = localStorage.getItem('voix_status') || 'online';
+    const STATUS_LABELS = { online: '🟢 Онлайн', away: '🟡 Отошёл', dnd: '🔴 Не беспокоить', offline: '⚫ Невидимка' };
+
+    function renderStatusDot(el) {
+      let dot = el.querySelector('.status-dot');
+      if (!dot) { dot = document.createElement('div'); dot.className = 'status-dot'; el.appendChild(dot); }
+      dot.className = 'status-dot status-' + myStatus;
+    }
+
+    function openStatusMenu(anchorEl) {
+      const existing = document.getElementById('statusMenu');
+      if (existing) { existing.remove(); return; }
+      const menu = document.createElement('div');
+      menu.className = 'status-menu';
+      menu.id = 'statusMenu';
+      const statuses = ['online', 'away', 'dnd', 'offline'];
+      statuses.forEach(s => {
+        const btn = document.createElement('button');
+        btn.className = 'status-item';
+        btn.textContent = STATUS_LABELS[s];
+        btn.onclick = () => {
+          myStatus = s;
+          localStorage.setItem('voix_status', s);
+          menu.remove();
+          updateAllStatusDots();
+          if (currentRoom) socket.emit('status', { room: currentRoom, id: myId, status: s });
+        };
+        menu.appendChild(btn);
+      });
+      anchorEl.style.position = 'relative';
+      anchorEl.appendChild(menu);
+      setTimeout(() => document.addEventListener('click', () => menu.remove(), { once: true }), 0);
+    }
+
+    function updateAllStatusDots() {
+      const av = document.getElementById('profileAvatar');
+      if (av) { av.style.position = 'relative'; renderStatusDot(av); }
+    }
+
+    // ══════════════════════════════════════
+    // NOTIFICATIONS
+    // ══════════════════════════════════════
+
+    const unreadCounts = {};    // { roomName: count }
+    let notifPermission = false;
+
+    async function requestNotifPermission() {
+      if (!('Notification' in window)) return;
+      if (Notification.permission === 'granted') { notifPermission = true; return; }
+      if (Notification.permission !== 'denied') {
+        const p = await Notification.requestPermission();
+        notifPermission = p === 'granted';
+      }
+    }
+
+    function showBrowserNotif(title, body, onClick) {
+      if (!notifPermission) return;
+      try {
+        const n = new Notification(title, { body, icon: '/favicon.ico', silent: false });
+        n.onclick = () => { window.focus(); if (onClick) onClick(); n.close(); };
+        setTimeout(() => n.close(), 5000);
+      } catch (e) { }
+    }
+
+    function showToast(icon, title, text, onClick) {
+      const t = document.createElement('div');
+      t.className = 'notif-toast';
+      t.innerHTML = `<div class="notif-toast-icon">${icon}</div>
+        <div class="notif-toast-body">
+          <div class="notif-toast-title">${title}</div>
+          <div class="notif-toast-text">${escHtml(text)}</div>
+        </div>`;
+      t.onclick = () => { t.remove(); if (onClick) onClick(); };
+      document.body.appendChild(t);
+      setTimeout(() => { if (t.parentNode) t.remove(); }, 4000);
+    }
+
+    function incrementUnread(room) {
+      if (!unreadCounts[room]) unreadCounts[room] = 0;
+      unreadCounts[room]++;
+      renderRooms();
+    }
+
+    function clearUnread(room) {
+      delete unreadCounts[room];
+      renderRooms();
+    }
+
+    // ══════════════════════════════════════
+    // REACTIONS
+    // ══════════════════════════════════════
+
+    const REACTION_EMOJIS = ['👍', '❤️', '😂', '😮', '😢', '😡', '🔥', '✅'];
+    // reactions: { msgId: { emoji: [userId, ...] } }
+    const msgReactions = {};
+
+    function toggleReactionPicker(msgId, anchorEl) {
+      const existing = document.getElementById('reactionPicker_' + msgId);
+      if (existing) { existing.remove(); return; }
+      // Remove any other open pickers
+      document.querySelectorAll('[id^="reactionPicker_"]').forEach(el => el.remove());
+
+      const picker = document.createElement('div');
+      picker.className = 'reaction-picker';
+      picker.id = 'reactionPicker_' + msgId;
+
+      REACTION_EMOJIS.forEach(emoji => {
+        const btn = document.createElement('button');
+        btn.className = 'reaction-picker-btn';
+        btn.textContent = emoji;
+        btn.onclick = (e) => {
+          e.stopPropagation();
+          picker.remove();
+          socket.emit('reaction', { room: currentRoom, msgId, emoji, userId: myId });
+          applyReaction(msgId, emoji, myId);
+        };
+        picker.appendChild(btn);
+      });
+
+      anchorEl.appendChild(picker);
+      setTimeout(() => document.addEventListener('click', () => picker.remove(), { once: true }), 0);
+    }
+
+    function applyReaction(msgId, emoji, userId) {
+      if (!msgReactions[msgId]) msgReactions[msgId] = {};
+      if (!msgReactions[msgId][emoji]) msgReactions[msgId][emoji] = [];
+      const arr = msgReactions[msgId][emoji];
+      const idx = arr.indexOf(userId);
+      if (idx === -1) arr.push(userId);
+      else arr.splice(idx, 1);
+      if (arr.length === 0) delete msgReactions[msgId][emoji];
+      renderMsgReactions(msgId);
+    }
+
+    function renderMsgReactions(msgId) {
+      const container = document.getElementById('reactions_' + msgId);
+      if (!container) return;
+      container.innerHTML = '';
+      const reactions = msgReactions[msgId] || {};
+      Object.entries(reactions).forEach(([emoji, users]) => {
+        if (!users.length) return;
+        const chip = document.createElement('div');
+        chip.className = 'reaction-chip' + (users.includes(myId) ? ' mine' : '');
+        chip.innerHTML = `${emoji} <span class="reaction-count">${users.length}</span>`;
+        chip.title = users.join(', ');
+        chip.onclick = () => {
+          socket.emit('reaction', { room: currentRoom, msgId, emoji, userId: myId });
+          applyReaction(msgId, emoji, myId);
+        };
+        container.appendChild(chip);
+      });
+    }
+
+    // ══════════════════════════════════════
+    // REPLY
+    // ══════════════════════════════════════
+
+    let replyTo = null;  // { msgId, name, text }
+
+    function setReply(msgId, name, text) {
+      replyTo = { msgId, name, text };
+      const bar = document.getElementById('replyBar');
+      bar.classList.add('visible');
+      document.getElementById('replyBarName').textContent = name;
+      document.getElementById('replyBarText').textContent = text;
+      msgText.focus();
+    }
+
+    function clearReply() {
+      replyTo = null;
+      document.getElementById('replyBar').classList.remove('visible');
+    }
+
+    // ══════════════════════════════════════
+    // EDIT & DELETE MESSAGES
+    // ══════════════════════════════════════
+
+    function startEditMsg(msgId, currentText) {
+      const editWrap = document.getElementById('editWrap_' + msgId);
+      const textEl = document.getElementById('msgtext_' + msgId);
+      if (!editWrap || !textEl) return;
+      textEl.style.display = 'none';
+      editWrap.classList.add('visible');
+      const inp = editWrap.querySelector('.msg-edit-input');
+      inp.value = currentText;
+      inp.focus();
+    }
+
+    function cancelEditMsg(msgId) {
+      const editWrap = document.getElementById('editWrap_' + msgId);
+      const textEl = document.getElementById('msgtext_' + msgId);
+      if (!editWrap || !textEl) return;
+      editWrap.classList.remove('visible');
+      textEl.style.display = '';
+    }
+
+    function saveEditMsg(msgId) {
+      const editWrap = document.getElementById('editWrap_' + msgId);
+      const textEl = document.getElementById('msgtext_' + msgId);
+      if (!editWrap || !textEl) return;
+      const newText = editWrap.querySelector('.msg-edit-input').value.trim();
+      if (!newText) return;
+      socket.emit('edit_message', { room: currentRoom, msgId, text: newText });
+      textEl.innerHTML = renderMsgText(newText);
+      const editedTag = document.getElementById('edited_' + msgId);
+      if (editedTag) editedTag.style.display = 'inline';
+      editWrap.classList.remove('visible');
+      textEl.style.display = '';
+    }
+
+    function deleteMsg(msgId) {
+      if (!confirm('Удалить сообщение?')) return;
+      const token = localStorage.getItem('voix_token') || '';
+      socket.emit('delete_message', { room: currentRoom, msgId, senderId: myId, token });
+      const textEl = document.getElementById('msgtext_' + msgId);
+      if (textEl) textEl.innerHTML = '<span class="msg-deleted">Сообщение удалено</span>';
+      const actionsEl = document.getElementById('actions_' + msgId);
+      if (actionsEl) actionsEl.remove();
+    }
+
+    // ══════════════════════════════════════
+    // MENTION RENDERING
+    // ══════════════════════════════════════
+
+    function escHtml(str) {
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function renderMsgText(text) {
+      let html = escHtml(text);
+      // Highlight @mentions
+      html = html.replace(/@(\w+)/g, '<span class="mention">@$1</span>');
+      return html;
+    }
+
+    // ══════════════════════════════════════
+    // PINNED MESSAGES
+    // ══════════════════════════════════════
+
+    let pinnedMsg = null;  // { msgId, text, name }
+
+    function pinMessage(msgId, name, text) {
+      pinnedMsg = { msgId, name, text };
+      updatePinnedBanner();
+      socket.emit('pin_message', { room: currentRoom, msgId, name, text });
+    }
+
+    function unpinMessage() {
+      pinnedMsg = null;
+      updatePinnedBanner();
+      socket.emit('pin_message', { room: currentRoom, msgId: null, name: null, text: null, unpin: true });
+    }
+
+    function updatePinnedBanner() {
+      const banner = document.getElementById('pinnedBanner');
+      if (!banner) return;
+      if (pinnedMsg) {
+        banner.classList.add('visible');
+        document.getElementById('pinnedBannerText').textContent = pinnedMsg.text;
+      } else {
+        banner.classList.remove('visible');
+      }
+    }
+
+    // ══════════════════════════════════════
+    // DIRECT MESSAGES
+    // ══════════════════════════════════════
+
+    let dmConversations = {};  // { userId: [{ from, text, time }] }
+    let activeDmUser = null;   // { id, name, color }
+    let dmUnread = {};         // { userId: count }
+    let onlineUsers = [];      // users currently in any room I'm in
+
+    function openDM(user) {
+      activeDmUser = user;
+      document.getElementById('dmModal').classList.add('visible');
+
+      // Set header
+      const av = document.getElementById('dmModalAvatar');
+      av.className = 'dm-avatar ' + getAvatarClass(user.id);
+      av.textContent = (user.name || '?')[0].toUpperCase();
+      document.getElementById('dmModalName').textContent = user.name;
+      document.getElementById('dmModalStatus').textContent = STATUS_LABELS[user.status || 'online'] || '';
+
+      // Clear unread
+      dmUnread[user.id] = 0;
+      renderDMList();
+
+      // Render conversation
+      renderDMChat(user.id);
+
+      setTimeout(() => document.getElementById('dmInput').focus(), 100);
+    }
+
+    function renderDMChat(userId) {
+      const dmChat = document.getElementById('dmChat');
+      dmChat.innerHTML = '';
+      const msgs = dmConversations[userId] || [];
+      if (!msgs.length) {
+        dmChat.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:13px;padding:40px 20px;">Начни разговор 👋</div>';
+        return;
+      }
+      msgs.forEach(m => {
+        const isMe = m.from === myId;
+        const div = document.createElement('div');
+        div.className = 'msg';
+        div.innerHTML = `
+          <div class="msg-avatar ${getAvatarClass(m.from)}">${(m.name || '?')[0].toUpperCase()}</div>
+          <div class="msg-body">
+            <div class="msg-meta">
+              <span class="msg-author" style="color:var(--${isMe ? 'accent' : 'accent2'})">${escHtml(m.name || 'Anon')}</span>
+              <span class="msg-time">${m.time}</span>
+            </div>
+            <div class="msg-text">${renderMsgText(m.text)}</div>
+          </div>`;
+        dmChat.appendChild(div);
+      });
+      dmChat.scrollTop = dmChat.scrollHeight;
+    }
+
+    function sendDM() {
+      const input = document.getElementById('dmInput');
+      if (!input) return;
+      const text = input.value.trim();
+      if (!text || !activeDmUser) return;
+
+      const msg = { from: myId, to: activeDmUser.id, name: myName(), text, time: formatTime() };
+      socket.emit('dm', msg);
+
+      if (!dmConversations[activeDmUser.id]) dmConversations[activeDmUser.id] = [];
+      msg.time = msg.time || formatTime();
+      dmConversations[activeDmUser.id].push(msg);
+      renderDMChat(activeDmUser.id);
+      input.value = '';
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        closeCtxMenu();
+        document.querySelectorAll('[id^="reactionPicker_"]').forEach(el => el.remove());
+        document.getElementById('roomDropdown')?.remove();
+        document.getElementById('statusMenu')?.remove();
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const dmInput = document.getElementById('dmInput');
+      if (dmInput) {
+        dmInput.addEventListener('keydown', e => {
+          if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendDM(); }
+        });
+      }
+    });
+
+    function renderDMList() {
+      const list = document.getElementById('dmList');
+      if (!list) return;
+      list.innerHTML = '';
+      // Show users we've had DMs with
+      const dmUsers = Object.keys(dmConversations);
+      if (!dmUsers.length) {
+        list.innerHTML = '<div style="font-size:12px;color:var(--muted);padding:4px 8px;">Нет переписок</div>';
+        return;
+      }
+      dmUsers.forEach(userId => {
+        const convUser = onlineUsers.find(u => u.id === userId) || { id: userId, name: userId, color: '#5b9fff' };
+        const item = document.createElement('div');
+        item.className = 'dm-item' + (activeDmUser && activeDmUser.id === userId ? ' active' : '');
+        const unread = dmUnread[userId] || 0;
+        item.innerHTML = `
+          <div class="dm-avatar ${getAvatarClass(userId)}">${(convUser.name || '?')[0].toUpperCase()}</div>
+          <span class="dm-name">${escHtml(convUser.name || userId)}</span>
+          ${unread ? `<span class="dm-badge">${unread}</span>` : ''}`;
+        item.onclick = () => openDM(convUser);
+        list.appendChild(item);
+      });
+    }
+
+    function showUsersModal() {
+      const list = document.getElementById('usersModalList');
+      list.innerHTML = '';
+      onlineUsers.forEach(u => {
+        if (u.id === myId) return;
+        const item = document.createElement('div');
+        item.className = 'users-modal-item';
+        // eslint-disable-next-line eqeqeq
+        const uIsAdmin = currentRoomCreator != null && currentRoomCreator == u.id;
+        item.innerHTML = `
+          <div class="dm-avatar ${getAvatarClass(u.id)}" style="width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;">${(u.name || '?')[0].toUpperCase()}</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:13px;font-weight:700;display:flex;align-items:center;gap:5px;">
+              ${escHtml(u.name || 'Anon')}
+              ${uIsAdmin ? '<span style="font-size:9px;font-weight:700;background:rgba(255,185,0,.12);border:1px solid rgba(255,185,0,.3);color:#ffb900;border-radius:4px;padding:1px 5px;">👑 ADMIN</span>' : '<span style="font-size:9px;font-weight:700;background:rgba(255,255,255,.06);color:var(--muted);border-radius:4px;padding:1px 5px;">участник</span>'}
+            </div>
+            <div style="font-size:11px;color:var(--muted);">${STATUS_LABELS[u.status || 'online'] || ''}</div>
+          </div>
+          ${u.id != myId ? `<button class="users-modal-dm-btn" onclick="document.getElementById('usersModal').classList.remove('visible'); openDM(${JSON.stringify(u).replace(/"/g, '&quot;')})">💌 ЛС</button>` : ''}`;
+        list.appendChild(item);
+      });
+      if (!onlineUsers.filter(u => u.id !== myId).length) {
+        list.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:13px;padding:30px;">Ты один в комнате</div>';
+      }
+      document.getElementById('usersModal').classList.add('visible');
+    }
+
+    // ══════════════════════════════════════
+    // ENHANCED addMsg — with reactions, reply, edit, pin
+    // ══════════════════════════════════════
+
+    function addMsg(data) {
+      if (chatEmpty) { chat.innerHTML = ''; chatEmpty = false; }
+      const isMe = data.id === myId || data.id === 'history_me';
+      const msgId = data.msgId || ('msg_' + Date.now() + '_' + Math.random().toString(36).slice(2));
+      data.msgId = msgId;
+
+      // Check for @mention of me
+      const myUsername = myName();
+      const isMentioned = data.text && data.text.toLowerCase().includes('@' + myUsername.toLowerCase());
+
+      const d = document.createElement('div');
+      d.className = 'msg' + (isMentioned ? ' mentioned' : '');
+      d.id = 'msg_' + msgId;
+      d.dataset.authorId = isMe ? myId : (data.id || '');
+      d.dataset.isMe = isMe ? '1' : '0';
+
+      // Reply reference — built safely via DOM to avoid template injection
+      let replyHtml = '';
+      if (data.replyTo && data.replyTo.text) {
+        const safeRName = escHtml(data.replyTo.name || 'Кто-то');
+        const safeRText = escHtml((data.replyTo.text || '').slice(0, 80));
+        const safeMid = escHtml(data.replyTo.msgId || '');
+        replyHtml = `<div class="msg-reply-ref" data-refid="${safeMid}">` +
+          `<span class="msg-reply-ref-name">↩ ${safeRName}</span>: ${safeRText}` +
+          `</div>`;
+      }
+
+      const authorColor = isMe ? myColor() : (data.color || '#5b9fff');
+      const avatarClass = getAvatarClass(isMe ? myId : (data.id || 'x'));
+
+      d.innerHTML = `
+        <div class="msg-avatar ${avatarClass}" style="color:#fff">${(isMe ? myName() : (data.name || '?'))[0].toUpperCase()}</div>
+        <div class="msg-body" style="flex:1;min-width:0;">
+          ${replyHtml}
+          <div class="msg-meta">
+            <span class="msg-author" style="color:${authorColor}">${escHtml(isMe ? myName() : (data.name || 'Anon'))}</span>
+            ${(() => { const aid = isMe ? myId : data.id; return (currentRoomCreator != null && currentRoomCreator == aid) ? '<span style="font-size:9px;font-weight:700;background:rgba(255,185,0,.12);border:1px solid rgba(255,185,0,.3);color:#ffb900;border-radius:4px;padding:1px 5px;margin-left:2px;">👑</span>' : ''; })()}
+            <span class="msg-time">${data.time || formatTime()}</span>
+            <span class="msg-edited-tag" id="edited_${msgId}" style="display:none;">(ред.)</span>
+          </div>
+          ${data.image
+          ? `<img src="${data.image}" class="msg-image" onclick="openLightbox('${data.image}')" />`
+          : `<div class="msg-text" id="msgtext_${msgId}">${renderMsgText(data.text || '')}</div>`
+        }
+          ${isMe && !data.image ? `
+          <div class="msg-edit-wrap" id="editWrap_${msgId}">
+            <textarea class="msg-edit-input"></textarea>
+            <button class="msg-edit-save" onclick="saveEditMsg('${msgId}')">✓</button>
+            <button class="msg-edit-cancel" onclick="cancelEditMsg('${msgId}')">✕</button>
+          </div>` : ''}
+          <div class="msg-reactions" id="reactions_${msgId}"></div>
+        </div>
+        <div class="msg-actions" id="actions_${msgId}">
+          <button class="msg-action-btn" title="Реакция" onclick="toggleReactionPicker('${msgId}', document.getElementById('actions_${msgId}'))">😊</button>
+          <button class="msg-action-btn" title="Ответить" onclick="setReply('${msgId}','${escHtml(isMe ? myName() : (data.name || 'Anon'))}','${escHtml((data.text || '').replace(/'/g, "\\'"))}')">↩</button>
+          ${isMe ? `
+          <button class="msg-action-btn" title="Редактировать" onclick="startEditMsg('${msgId}','${escHtml((data.text || '').replace(/'/g, "\\'"))}')">✏️</button>` : ''}
+          ${(isMe || isRoomAdmin()) ? `
+          <button class="msg-action-btn" title="Удалить" onclick="deleteMsg('${msgId}')">🗑</button>` : ''}
+          ${!isMe ? `<button class="msg-action-btn" title="Закрепить" onclick="pinMessage('${msgId}','${escHtml(data.name || 'Anon')}','${escHtml((data.text || '').replace(/'/g, "\\'"))}')">📌</button>` : ''}
+        </div>`;
+
+      chat.appendChild(d);
+      chat.scrollTop = chat.scrollHeight;
+      return msgId;
+    }
+
+    function scrollToMsg(msgId) {
+      const el = document.getElementById('msg_' + msgId);
+      if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.style.outline = '2px solid var(--accent)'; setTimeout(() => el.style.outline = '', 1500); }
+    }
+
+    function openLightbox(src) {
+      document.getElementById('lightboxImg').src = src;
+      document.getElementById('lightbox').classList.add('visible');
+    }
+
+    // ══════════════════════════════════════
+    // IMAGE UPLOAD
+    // ══════════════════════════════════════
+
+    function handleImageUpload(file) {
+      if (!file || !file.type.startsWith('image/')) return;
+      if (!currentRoom) { alert('Сначала войди в комнату'); return; }
+      if (file.size > 3 * 1024 * 1024) { alert('Файл слишком большой (макс 3MB)'); return; }
+      const reader = new FileReader();
+      reader.onload = e => {
+        const imageData = e.target.result;
+        const msgId = 'img_' + Date.now();
+        socket.emit('message', { room: currentRoom, id: myId, msgId, image: imageData, name: myName(), color: myColor(), text: '' });
+        addMsg({ id: myId, msgId, image: imageData, name: myName(), color: myColor(), text: '' });
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // ══════════════════════════════════════
+    // SOCKET — NEW EVENTS
+    // ══════════════════════════════════════
+
+    socket.on('reaction', data => {
+      if (data.room !== currentRoom) return;
+      applyReaction(data.msgId, data.emoji, data.userId);
+    });
+
+    socket.on('edit_message', data => {
+      if (data.room !== currentRoom) return;
+      const textEl = document.getElementById('msgtext_' + data.msgId);
+      if (textEl) {
+        textEl.innerHTML = renderMsgText(data.text);
+        const tag = document.getElementById('edited_' + data.msgId);
+        if (tag) tag.style.display = 'inline';
+      }
+    });
+
+    socket.on('delete_message', data => {
+      if (data.room !== currentRoom) return;
+      const textEl = document.getElementById('msgtext_' + data.msgId);
+      if (textEl) textEl.innerHTML = '<span class="msg-deleted">Сообщение удалено</span>';
+    });
+
+    socket.on('pin_message', data => {
+      if (data.room !== currentRoom) return;
+      if (data.unpin) {
+        pinnedMsg = null;
+      } else {
+        pinnedMsg = data;
+      }
+      updatePinnedBanner();
+    });
+
+    socket.on('dm', data => {
+      if (data.to !== myId) return;
+      if (!dmConversations[data.from]) dmConversations[data.from] = [];
+      data.time = data.time || formatTime();
+      dmConversations[data.from].push(data);
+
+      // If DM modal is open with this user — render
+      if (activeDmUser && activeDmUser.id === data.from) {
+        renderDMChat(data.from);
+      } else {
+        // Increment unread
+        if (!dmUnread[data.from]) dmUnread[data.from] = 0;
+        dmUnread[data.from]++;
+        renderDMList();
+        sfx.message();
+        showToast('💌', data.name || 'ЛС', data.text, () => {
+          const user = onlineUsers.find(u => u.id === data.from) || { id: data.from, name: data.name || data.from };
+          openDM(user);
+        });
+        showBrowserNotif('💌 ' + (data.name || 'ЛС'), data.text, () => {
+          const user = onlineUsers.find(u => u.id === data.from) || { id: data.from, name: data.name || data.from };
+          openDM(user);
+        });
+      }
+    });
+
+    socket.on('status', data => {
+      const user = onlineUsers.find(u => u.id === data.id);
+      if (user) user.status = data.status;
+    });
+
+
+
+    // ══════════════════════════════════════
+    // CONTEXT MENU (right click on message)
+    // ══════════════════════════════════════
+
+    let ctxMsgData = null;
+
+    function closeCtxMenu() {
+      const m = document.getElementById('ctxMenu');
+      if (m) m.remove();
+    }
+
+    function openCtxMenu(e, msgId, isMe, name, text) {
+      closeCtxMenu();
+
+      ctxMsgData = { msgId, isMe, name, text };
+
+      const menu = document.createElement('div');
+      menu.className = 'ctx-menu';
+      menu.id = 'ctxMenu';
+
+      // Reaction row
+      const reactRow = document.createElement('div');
+      reactRow.className = 'ctx-reactions';
+      REACTION_EMOJIS.forEach(emoji => {
+        const btn = document.createElement('button');
+        btn.className = 'ctx-reaction-btn';
+        btn.textContent = emoji;
+        btn.onclick = () => {
+          closeCtxMenu();
+          socket.emit('reaction', { room: currentRoom, msgId, emoji, userId: myId });
+          applyReaction(msgId, emoji, myId);
+        };
+        reactRow.appendChild(btn);
+      });
+      menu.appendChild(reactRow);
+
+      const div1 = document.createElement('div');
+      div1.className = 'ctx-divider';
+      menu.appendChild(div1);
+
+      // Reply
+      const replyBtn = document.createElement('button');
+      replyBtn.className = 'ctx-item';
+      replyBtn.innerHTML = '↩️ Ответить';
+      replyBtn.onclick = () => { closeCtxMenu(); setReply(msgId, name, text); };
+      menu.appendChild(replyBtn);
+
+      // Pin / Unpin
+      const isPinned = pinnedMsg && pinnedMsg.msgId === msgId;
+      const pinBtn = document.createElement('button');
+      pinBtn.className = 'ctx-item';
+      pinBtn.innerHTML = isPinned ? '📌 Открепить' : '📌 Закрепить';
+      pinBtn.onclick = () => { closeCtxMenu(); isPinned ? unpinMessage() : pinMessage(msgId, name, text); };
+      menu.appendChild(pinBtn);
+
+      // Copy
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'ctx-item';
+      copyBtn.innerHTML = '📋 Копировать';
+      copyBtn.onclick = () => { closeCtxMenu(); navigator.clipboard.writeText(text).catch(() => { }); };
+      menu.appendChild(copyBtn);
+
+      // Edit only for own messages
+      if (isMe) {
+        const div2 = document.createElement('div');
+        div2.className = 'ctx-divider';
+        menu.appendChild(div2);
+
+        const editBtn = document.createElement('button');
+        editBtn.className = 'ctx-item';
+        editBtn.innerHTML = '✏️ Редактировать';
+        editBtn.onclick = () => { closeCtxMenu(); startEditMsg(msgId, text); };
+        menu.appendChild(editBtn);
+      }
+
+      // Delete: own messages OR admin can delete any
+      if (isMe || isRoomAdmin()) {
+        if (!isMe) {
+          // add divider only if not already added
+          const div3 = document.createElement('div');
+          div3.className = 'ctx-divider';
+          menu.appendChild(div3);
+        }
+        const delBtn = document.createElement('button');
+        delBtn.className = 'ctx-item danger';
+        delBtn.innerHTML = isRoomAdmin() && !isMe ? '🗑 Удалить (Admin)' : '🗑 Удалить';
+        delBtn.onclick = () => { closeCtxMenu(); deleteMsg(msgId); };
+        menu.appendChild(delBtn);
+      }
+
+      // Position
+      menu.style.left = Math.min(e.clientX, window.innerWidth - 200) + 'px';
+      menu.style.top = Math.min(e.clientY, window.innerHeight - 300) + 'px';
+      document.body.appendChild(menu);
+
+      setTimeout(() => document.addEventListener('click', closeCtxMenu, { once: true }), 0);
+    }
+
+
+    // ══════════════════════════════════════
+    // SCREEN SHARE
+    // ══════════════════════════════════════
+
+    let screenStream = null;      // my outgoing screen stream
+    let screenActive = false;     // am I sharing?
+    let screenPeers = {};         // separate RTCPeerConnections for screen (peerId -> pc)
+    let watchingScreen = false;   // am I watching someone's screen?
+
+    function updateScreenBtn() {
+      const btn = document.getElementById('screenBtn');
+      if (!btn) return;
+      if (screenActive) {
+        btn.className = 'btn btn-screen screen-on';
+        btn.innerHTML = '🖥 Остановить показ';
+      } else {
+        btn.className = 'btn btn-screen';
+        btn.innerHTML = '🖥 Показать экран';
+      }
+    }
+
+    async function toggleScreen() {
+      if (!currentRoom) { addSystemMsg('⚠ Сначала войди в комнату'); return; }
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+        addSystemMsg('⚠ Твой браузер не поддерживает демонстрацию экрана');
+        return;
+      }
+
+      if (screenActive) {
+        stopScreenShare();
+        return;
+      }
+
+      try {
+        screenStream = await navigator.mediaDevices.getDisplayMedia({
+          video: { cursor: 'always', frameRate: 30 },
+          audio: false
+        });
+
+        screenActive = true;
+        updateScreenBtn();
+        addSystemMsg('🖥 Ты начал демонстрацию экрана');
+
+        // Notify all room members
+        socket.emit('screen_share_start', { room: currentRoom, name: myName() });
+
+        // Send screen to all current peers
+        for (const remoteId of Object.keys(peers)) {
+          await startScreenPeer(remoteId, true);
+        }
+
+        // Handle user stopping via browser UI (e.g. clicking "Stop sharing")
+        screenStream.getVideoTracks()[0].onended = () => {
+          stopScreenShare();
+        };
+
+      } catch (e) {
+        if (e.name !== 'NotAllowedError') {
+          addSystemMsg('⚠ Ошибка демонстрации: ' + e.message);
+        }
+        screenActive = false;
+        updateScreenBtn();
+      }
+    }
+
+    function stopScreenShare() {
+      if (!screenActive) return;
+      screenActive = false;
+
+      if (screenStream) {
+        screenStream.getTracks().forEach(t => t.stop());
+        screenStream = null;
+      }
+
+      // Close all screen peer connections
+      Object.values(screenPeers).forEach(pc => pc.close());
+      for (const k in screenPeers) delete screenPeers[k];
+
+      updateScreenBtn();
+      addSystemMsg('🖥 Демонстрация экрана остановлена');
+      socket.emit('screen_share_stop', { room: currentRoom, name: myName() });
+
+      // Hide viewer if watching own stream (edge case)
+      hideScreenViewer();
+    }
+
+    async function startScreenPeer(remoteId, initiator) {
+      // Close existing screen peer if any
+      if (screenPeers[remoteId]) {
+        screenPeers[remoteId].close();
+        delete screenPeers[remoteId];
+      }
+
+      const pc = new RTCPeerConnection({ iceServers });
+      screenPeers[remoteId] = pc;
+
+      pc.onicecandidate = e => {
+        if (e.candidate) {
+          socket.emit('screen_ice', { to: remoteId, from: myId, candidate: e.candidate });
+        }
+      };
+
+      // Receiver side: show the screen video
+      pc.ontrack = e => {
+        showScreenViewer(e.streams[0], null);
+      };
+
+      pc.onconnectionstatechange = () => {
+        if (['failed', 'closed', 'disconnected'].includes(pc.connectionState)) {
+          pc.close();
+          delete screenPeers[remoteId];
+          // If we were watching and sharer disconnected
+          if (watchingScreen) hideScreenViewer();
+        }
+      };
+
+      if (initiator && screenStream) {
+        screenStream.getTracks().forEach(t => pc.addTrack(t, screenStream));
+        try {
+          const offer = await pc.createOffer();
+          await pc.setLocalDescription(offer);
+          socket.emit('screen_offer', { to: remoteId, from: myId, sdp: pc.localDescription });
+        } catch (e) {
+          console.error('Screen offer error:', e);
+        }
+      }
+
+      return pc;
+    }
+
+    function showScreenViewer(stream, sharerName) {
+      watchingScreen = true;
+      const viewer = document.getElementById('screenViewer');
+      const video = document.getElementById('screenVideo');
+      const vidFull = document.getElementById('screenVideoFull');
+      const nameEl = document.getElementById('screenSharerName');
+      const fullName = document.getElementById('screenFullName');
+
+      if (stream) {
+        video.srcObject = stream;
+        if (vidFull) vidFull.srcObject = stream;
+      }
+      if (sharerName) {
+        if (nameEl) nameEl.textContent = sharerName;
+        if (fullName) fullName.textContent = '🖥 ' + sharerName + ' — демонстрация экрана';
+      }
+      if (viewer) viewer.style.display = 'flex';
+    }
+
+    function hideScreenViewer() {
+      watchingScreen = false;
+      const viewer = document.getElementById('screenViewer');
+      const video = document.getElementById('screenVideo');
+      const vidFull = document.getElementById('screenVideoFull');
+      if (viewer) viewer.style.display = 'none';
+      if (video) { video.srcObject = null; }
+      if (vidFull) { vidFull.srcObject = null; }
+      // Exit fullscreen if open
+      const overlay = document.getElementById('screenFullOverlay');
+      if (overlay) overlay.style.display = 'none';
+    }
+
+    function stopWatchingScreen() {
+      hideScreenViewer();
+    }
+
+    let screenFullOpen = false;
+    function toggleScreenFull() {
+      const overlay = document.getElementById('screenFullOverlay');
+      const video = document.getElementById('screenVideo');
+      const vidFull = document.getElementById('screenVideoFull');
+      if (!overlay) return;
+
+      screenFullOpen = !screenFullOpen;
+      if (screenFullOpen) {
+        // Mirror stream to full-screen video
+        if (video && video.srcObject && vidFull) {
+          vidFull.srcObject = video.srcObject;
+        }
+        overlay.style.display = 'flex';
+      } else {
+        overlay.style.display = 'none';
+      }
+    }
+
+    // ── Socket events for screen share ──
+
+    socket.on('screen_share_start', data => {
+      if (data.room !== currentRoom) return;
+      if (data.id === myId) return;  // ignore own announcement
+
+      addSystemMsg('🖥 ' + (data.name || 'Кто-то') + ' начал демонстрацию экрана');
+
+      // If I have a peer connection with sharer, prepare to receive
+      // Start a screen peer as receiver
+      startScreenPeer(data.id, false);
+    });
+
+    socket.on('screen_share_stop', data => {
+      if (data.room !== currentRoom) return;
+      if (data.id === myId) return;
+
+      addSystemMsg('🖥 ' + (data.name || 'Кто-то') + ' остановил демонстрацию');
+
+      // Close screen peer with this user
+      if (screenPeers[data.id]) {
+        screenPeers[data.id].close();
+        delete screenPeers[data.id];
+      }
+      hideScreenViewer();
+    });
+
+    socket.on('screen_offer', async data => {
+      if (data.to !== myId) return;
+      const pc = await startScreenPeer(data.from, false);
+      try {
+        await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
+        const answer = await pc.createAnswer();
+        await pc.setLocalDescription(answer);
+        socket.emit('screen_answer', { to: data.from, from: myId, sdp: pc.localDescription });
+
+        // Show viewer with sharer's name
+        const sharer = onlineUsers.find(u => u.id === data.from);
+        const sharerName = sharer ? sharer.name : 'Участник';
+        showScreenViewer(null, sharerName);
+      } catch (e) {
+        console.error('Screen offer handle error:', e);
+      }
+    });
+
+    socket.on('screen_answer', async data => {
+      if (data.to !== myId) return;
+      const pc = screenPeers[data.from];
+      if (!pc) return;
+      try {
+        await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
+      } catch (e) {
+        console.error('Screen answer error:', e);
+      }
+    });
+
+    socket.on('screen_ice', async data => {
+      if (data.to !== myId) return;
+      const pc = screenPeers[data.from];
+      if (!pc) return;
+      try {
+        await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+      } catch (e) {
+        console.error('Screen ICE error:', e);
+      }
+    });
+
+    // When a new user joins while I'm sharing — send them the screen
+    // Hook into socket.on("users") to detect new peers
+    const _origUsersHandlers = [];
+
+
     // ══════════════════════════════════════
     // Socket Events
     // ══════════════════════════════════════
 
     socket.on("connect", () => {
       myId = socket.id;
+      // Re-join room after reconnect
+      if (currentRoom) {
+        socket.emit("join", { room: currentRoom, name: myName(), color: myColor() });
+      }
     });
 
     socket.on("message", data => {
-      if (data.room !== currentRoom) return;
+      if (data.room !== currentRoom) {
+        // Different room — increment unread and notify
+        incrementUnread(data.room);
+        sfx.message();
+        showToast('💬', '#' + data.room, (data.name || 'Кто-то') + ': ' + (data.text || '📷'), () => selectRoom(data.room));
+        showBrowserNotif('#' + data.room + ' — ' + (data.name || 'Кто-то'), data.text || '📷 Картинка', () => selectRoom(data.room));
+        return;
+      }
+      // Skip echo for own messages (already rendered locally)
+      if (data.msgId && sentMsgIds.has(data.msgId)) {
+        sentMsgIds.delete(data.msgId);
+        return;
+      }
       if (data.id !== myId) sfx.message();
       addMsg(data);
     });
 
     socket.on("users", data => {
       if (data.room !== currentRoom) return;
+      onlineUsers = data.users;  // save for DM list
+      // If I'm sharing, offer screen to any new peer
+      if (screenActive && screenStream) {
+        data.users.forEach(u => {
+          if (u.id !== myId && !screenPeers[u.id]) {
+            startScreenPeer(u.id, true);
+          }
+        });
+      }
 
       const newIds = new Set(data.users.map(u => u.id));
 
@@ -3318,12 +5310,26 @@
       }
     });
 
+    const sentMsgIds = new Set();  // track own sent messages to skip server echo
+    // Clean up sentMsgIds after 10s to prevent memory leak
+    function trackSentMsg(msgId) {
+      sentMsgIds.add(msgId);
+      setTimeout(() => sentMsgIds.delete(msgId), 10000);
+    }
+
     function sendMessage() {
       const txt = msgText.value.trim();
       if (!txt || !currentRoom) return;
-      socket.emit("message", { room: currentRoom, id: myId, text: txt, name: myName(), color: myColor() });
-      sfx.messageSent();   // звук отправки
-      isTyping = false;    // сбрасываем статус печати
+      const msgId = 'msg_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+      const msgData = { room: currentRoom, id: myId, msgId, text: txt, name: myName(), color: myColor() };
+      if (replyTo) msgData.replyTo = { ...replyTo };  // snapshot replyTo BEFORE clearing
+      // Render immediately locally so reply is visible right away
+      addMsg({ ...msgData });
+      clearReply();  // clear after addMsg
+      trackSentMsg(msgId);
+      socket.emit("message", msgData);
+      sfx.messageSent();
+      isTyping = false;
       clearTimeout(typingTimeout);
       msgText.value = "";
       msgText.style.height = "42px";
@@ -3339,6 +5345,8 @@
 
     function leaveRoom() {
       if (!currentRoom) return;
+      // Stop screen share before leaving
+      if (screenActive) stopScreenShare();
       socket.emit("leave", { room: currentRoom });
       Object.values(peers).forEach(pc => pc.close());
       for (const k in peers) delete peers[k];
@@ -3350,6 +5358,8 @@
       Object.keys(typingUsers).forEach(id => removeTypingIndicator(id));
 
       currentRoom = null;
+      pinnedMsg = null;
+      updatePinnedBanner();
       muteState = false;
       speakingState = false;
       micActive = false;
@@ -3557,6 +5567,71 @@
     tryAutoLogin();
 
   </script>
+
+  <!-- ══════════════════════════════════════
+     LIGHTBOX
+══════════════════════════════════════ -->
+  <!-- Screen share fullscreen overlay -->
+  <div id="screenFullOverlay"
+    style="display:none;position:fixed;inset:0;background:#000;z-index:400;flex-direction:column;">
+    <div style="position:absolute;top:12px;right:16px;display:flex;gap:8px;z-index:1;">
+      <span id="screenFullName"
+        style="color:#fff;font-size:13px;font-weight:700;padding:6px 12px;background:rgba(0,0,0,0.6);border-radius:8px;"></span>
+      <button onclick="toggleScreenFull()"
+        style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.2);color:#fff;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;">✕
+        Выйти</button>
+    </div>
+    <video id="screenVideoFull" autoplay playsinline style="width:100%;height:100%;object-fit:contain;"></video>
+  </div>
+
+  <div class="lightbox" id="lightbox" onclick="this.classList.remove('visible')">
+    <img id="lightboxImg" src="" />
+  </div>
+
+  <!-- ══════════════════════════════════════
+     MODAL: Users in Room (with DM button)
+══════════════════════════════════════ -->
+  <div class="modal-overlay" id="usersModal">
+    <div class="modal" style="width: 380px;">
+      <div class="modal-title">👥 Участники</div>
+      <div class="users-modal-list" id="usersModalList"></div>
+      <div class="modal-btns" style="margin-top: 16px;">
+        <button class="btn btn-modal-ok"
+          onclick="document.getElementById('usersModal').classList.remove('visible')">Закрыть</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+     MODAL: DM Conversation
+══════════════════════════════════════ -->
+  <div class="modal-overlay" id="dmModal">
+    <div class="modal"
+      style="width: 480px; padding: 0; overflow: hidden; height: 560px; display: flex; flex-direction: column;">
+      <div class="chat-topbar" style="border-radius: 16px 16px 0 0;">
+        <div class="chat-topbar-left">
+          <div id="dmModalAvatar"
+            style="width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0;">
+          </div>
+          <div>
+            <div class="dm-topbar-name" id="dmModalName"></div>
+            <div id="dmModalStatus" style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;"></div>
+          </div>
+        </div>
+        <button class="btn btn-leave" style="font-size:12px;padding:5px 10px;"
+          onclick="document.getElementById('dmModal').classList.remove('visible')">✕ Закрыть</button>
+      </div>
+      <div id="dmChat" style="flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:10px;">
+      </div>
+      <div style="border-top:1px solid var(--border);padding:12px 16px;display:flex;gap:8px;align-items:flex-end;">
+        <textarea id="dmInput"
+          style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-family:'Syne',sans-serif;font-size:13px;color:var(--text);resize:none;outline:none;height:38px;max-height:100px;"
+          placeholder="Написать сообщение..."></textarea>
+        <button class="btn btn-send" style="height:38px;padding:0 14px;" onclick="sendDM()">Send</button>
+      </div>
+    </div>
+  </div>
+
 </body>
 
 </html>

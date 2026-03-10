@@ -479,21 +479,25 @@ def on_disconnect():
 
 @socketio.on("message")
 def on_message(data):
-    room = data.get("room")
-    name = data.get("name", "Anon")
-    text = data.get("text", "")
-    if not text or not room:
+    room  = data.get("room")
+    name  = data.get("name", "Anon")
+    text  = data.get("text", "")
+    image = data.get("image", "")
+    if not room or (not text and not image):
         return
     con = get_db()
-    con.execute("INSERT INTO messages (room, author, text) VALUES (?,?,?)", (room, name, text))
+    con.execute("INSERT INTO messages (room, author, text) VALUES (?,?,?)", (room, name, text or "[image]"))
     con.commit()
     con.close()
     emit("message", {
-        "id":    data.get("id"),
-        "name":  name,
-        "color": data.get("color", "#5b9fff"),
-        "text":  text,
-        "room":  room,
+        "id":      data.get("id"),
+        "msgId":   data.get("msgId"),
+        "name":    name,
+        "color":   data.get("color", "#5b9fff"),
+        "text":    text,
+        "image":   image,
+        "room":    room,
+        "replyTo": data.get("replyTo"),
     }, to=room)
 
 @socketio.on("typing")
@@ -518,3 +522,83 @@ def on_ice(data):
 
 if __name__ == "__main__":
     socketio.run(app, host="0.0.0.0", port=8080, debug=True)
+
+
+# ══════════════════════════════════════
+# Socket.IO — New Events (reactions, edit, delete, pin, DM, status)
+# ══════════════════════════════════════
+
+@socketio.on("reaction")
+def on_reaction(data):
+    emit("reaction", data, to=data.get("room"), include_self=False)
+
+@socketio.on("edit_message")
+def on_edit_message(data):
+    emit("edit_message", data, to=data.get("room"), include_self=False)
+
+@socketio.on("delete_message")
+def on_delete_message(data):
+    room   = data.get("room")
+    msg_id = data.get("msgId")
+    sender_id = data.get("senderId")  # user id of requester
+
+    # Permission check: sender must be message author OR room admin
+    con  = get_db()
+    room_row = con.execute("SELECT created_by FROM rooms WHERE name=?", (room,)).fetchone()
+    room_creator = room_row["created_by"] if room_row else None
+
+    is_admin = room_creator and str(room_creator) == str(sender_id)
+
+    # If not admin, check if the message is theirs (by username match via token)
+    # We trust the client-side check here for username-based authorship
+    # since msgId is client-generated; server just forwards the event
+    # Admin can always delete; otherwise trust client isMe check
+    if not is_admin:
+        # Non-admin: allow only if they provided valid token
+        token = data.get("token", "")
+        user  = get_user_by_token(token) if token else None
+        if not user:
+            con.close()
+            return  # reject unauthenticated deletes
+    con.close()
+    emit("delete_message", data, to=room)
+
+@socketio.on("pin_message")
+def on_pin_message(data):
+    emit("pin_message", data, to=data.get("room"))
+
+@socketio.on("dm")
+def on_dm(data):
+    # Send directly to the recipient's socket
+    emit("dm", data, to=data.get("to"))
+
+@socketio.on("status")
+def on_status(data):
+    emit("status", data, to=data.get("room"), include_self=False)
+
+
+# ══════════════════════════════════════
+# Screen Share Signaling
+# ══════════════════════════════════════
+
+@socketio.on("screen_share_start")
+def on_screen_share_start(data):
+    data["id"] = request.sid
+    emit("screen_share_start", data, to=data.get("room"), include_self=False)
+
+@socketio.on("screen_share_stop")
+def on_screen_share_stop(data):
+    data["id"] = request.sid
+    emit("screen_share_stop", data, to=data.get("room"), include_self=False)
+
+@socketio.on("screen_offer")
+def on_screen_offer(data):
+    emit("screen_offer", data, to=data.get("to"))
+
+@socketio.on("screen_answer")
+def on_screen_answer(data):
+    emit("screen_answer", data, to=data.get("to"))
+
+@socketio.on("screen_ice")
+def on_screen_ice(data):
+    emit("screen_ice", data, to=data.get("to"))
