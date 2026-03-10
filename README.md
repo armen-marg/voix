@@ -1,84 +1,119 @@
-# 🎙 Voix — Voice + Text Chat
+# 🎙 Voix — голосовой и текстовый чат
 
-A real-time voice and text chat app built with Flask, Socket.IO, and WebRTC.
+Voix — веб-приложение для общения в реальном времени. Голос, текст, личные сообщения и демонстрация экрана — всё в одном месте.
 
-## Features
+---
 
-- 🔐 User registration and login with JWT tokens
-- 💬 Real-time text messaging
-- 🎤 Voice chat via WebRTC
-- 🏠 Create, archive, and delete rooms
-- 🔒 Password-protected private rooms
-- 🔑 Join any room by name
-- 🌙 Multiple themes: Dark, Light, AMOLED, Forest, Sunset
-- 🌍 Multi-language support: Russian, English, Armenian
-- ✍️ Typing indicators
-- 🔊 Speaking indicators with voice level meter
-- 📧 Email validation via DNS (MX records)
+## ✨ Возможности
 
-## Tech Stack
+### 💬 Чат
+- Сообщения в реальном времени через Socket.IO
+- Реакции на сообщения (👍 ❤️ 😂 😮 😢 😡 🔥 ✅)
+- Ответ на конкретное сообщение (reply с цитатой)
+- Редактирование и удаление своих сообщений
+- Загрузка и просмотр картинок (до 3 МБ)
+- Закреплённые сообщения
+- @упоминания с подсветкой
+- Контекстное меню по правой кнопке мыши
 
-- **Backend:** Python, Flask, Flask-SocketIO
-- **Frontend:** Vanilla JS, HTML, CSS
-- **Database:** SQLite
-- **Voice:** WebRTC + Metered TURN servers
-- **Real-time:** Socket.IO
+### 🎤 Голос
+- Голосовые звонки через WebRTC (peer-to-peer)
+- Push-to-talk / постоянный микрофон
+- Индикаторы активности голоса
 
-## Setup
+### 🖥 Демонстрация экрана
+- Показ экрана, окна или вкладки
+- Просмотр в панели чата или на весь экран
+- Одновременно с голосом
 
-### 1. Clone the repository
+### 👤 Пользователи
+- Регистрация и вход с JWT токенами
+- Уникальные градиентные аватары
+- Статус: онлайн / отошёл / не беспокоить / невидимка
+- Роли: 👑 Admin (создатель комнаты) / участник
+
+### 💌 Личные сообщения
+- ЛС между участниками прямо из списка комнаты
+- Уведомления о новых ЛС
+
+### 🔔 Уведомления
+- Бейдж с числом непрочитанных на комнате
+- Toast-уведомления внутри приложения
+- Браузерные push-уведомления
+
+### 🏠 Комнаты
+- Создание публичных и приватных комнат (с паролем)
+- Архивирование и удаление комнат
+- Скрытие комнаты из своего списка
+- Вход по имени комнаты
+
+### 🎨 Интерфейс
+- 5 тем: Тёмная, Светлая, AMOLED, Лес, Закат
+- Мультиязычность: RU / EN / HY
+
+---
+
+## 🛠 Стек
+
+| Часть | Технология |
+|-------|-----------|
+| Backend | Python, Flask, Flask-SocketIO |
+| Frontend | Vanilla JS, HTML, CSS |
+| Голос / Экран | WebRTC, TURN (Metered) |
+| БД | SQLite |
+| Авторизация | JWT |
+| Реалтайм | Socket.IO |
+
+---
+
+## 🚀 Запуск
+
+### 1. Установи зависимости
 
 ```bash
-git clone https://github.com/armen-marg/voix.git
-cd voix
+pip install flask flask-socketio flask-cors python-dotenv
 ```
 
-### 2. Install dependencies
-
-```bash
-pip install flask flask-socketio dnspython python-dotenv
-```
-
-### 3. Create `.env` file
+### 2. Создай `.env` файл
 
 ```
-METERED_USERNAME=your_username_here
-METERED_API_KEY=your_api_key_here
+METERED_USERNAME=your_username
+METERED_API_KEY=your_api_key
 ```
 
-> Get your free TURN credentials at [metered.ca](https://www.metered.ca)
-
-### 4. Run the server
+### 3. Запусти сервер
 
 ```bash
 python server.py
 ```
 
-### 5. Open in browser
+### 4. Открой в браузере
 
 ```
 http://localhost:8080
 ```
 
-## Usage with friends
+Друг подключается по твоему IP в Radmin VPN:
+```
+http://26.x.x.x:8080
+```
 
-- Make sure your friend is on the same network or connected via VPN (e.g. Radmin VPN)
-- Share your local IP address with your friend
-- They open `http://your-ip:8080` in their browser
-- Both join the same room — voice and chat will work automatically
+---
 
-## Project Structure
+## 📁 Структура
 
 ```
-voix/
-├── server.py          # Flask backend
-├── .env               # Secret keys (not committed)
-├── .env.example       # Template for .env
+chats_/
+├── server.py          # Flask backend + Socket.IO
+├── templates/
+│   └── index.html     # Всё приложение (single-file)
+├── .env               # Секреты (не коммитить!)
 ├── .gitignore
-└── templates/
-    └── index.html     # Frontend (single file)
+└── README.md
 ```
 
-## License
+---
 
-MIT
+## 👤 Автор
+
+**armen-marg** — [github.com/armen-marg](https://github.com/armen-marg)
