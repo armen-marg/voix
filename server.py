@@ -37,6 +37,7 @@ def init_db():
             password TEXT    NOT NULL,
             color    TEXT    NOT NULL DEFAULT '#5b9fff',
             token    TEXT    UNIQUE,
+            avatar   TEXT,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
     """)
@@ -81,6 +82,18 @@ def hash_password(password):
     return hashlib.pbkdf2_hmac("sha256", password.encode(), salt.encode(), 260000).hex()
 
 init_db()
+
+def migrate_db():
+    """Add new columns to existing databases without breaking them"""
+    con = get_db()
+    for sql in [
+        "ALTER TABLE users ADD COLUMN avatar TEXT",
+    ]:
+        try: con.execute(sql); con.commit()
+        except: pass
+    con.close()
+
+migrate_db()
 
 # ══════════════════════════════════════
 # Online users
@@ -214,6 +227,7 @@ def register():
             "username":   user["username"],
             "email":      user["email"],
             "color":      user["color"],
+            "avatar":     user["avatar"],
             "created_at": user["created_at"],
         }
     })
@@ -252,6 +266,7 @@ def login():
             "username":   user["username"],
             "email":      user["email"],
             "color":      user["color"],
+            "avatar":     user["avatar"],
             "created_at": user["created_at"],
         }
     })
@@ -274,6 +289,7 @@ def auth_me():
             "username":   user["username"],
             "email":      user["email"],
             "color":      user["color"],
+            "avatar":     user["avatar"],
             "created_at": user["created_at"],
         }
     })
@@ -430,6 +446,33 @@ def join_room_api():
     con.close()
     return jsonify({"ok": True, "history": [dict(m) for m in msgs]})
 
+@app.route("/api/avatar", methods=["POST"])
+def api_avatar():
+    data  = request.json or {}
+    token = data.get("token", "")
+    con   = get_db()
+    user  = con.execute("SELECT * FROM users WHERE token=?", (token,)).fetchone()
+    if not user:
+        con.close()
+        return jsonify({"error": "unauthorized"}), 401
+
+    if data.get("get"):
+        avatar = user["avatar"]
+        con.close()
+        return jsonify({"avatar": avatar})
+
+    avatar = data.get("avatar", "")
+    # Limit avatar size ~200KB base64
+    if len(avatar) > 300000:
+        con.close()
+        return jsonify({"error": "too large"}), 400
+
+    con.execute("UPDATE users SET avatar=? WHERE id=?", (avatar, user["id"]))
+    con.commit()
+    con.close()
+    return jsonify({"ok": True})
+
+
 @app.route("/api/turn")
 def turn_credentials():
     import urllib.request, json as _json
@@ -521,7 +564,9 @@ def on_ice(data):
     emit("ice", data, to=data.get("to"))
 
 if __name__ == "__main__":
-    socketio.run(app, host="0.0.0.0", port=8080, debug=True)
+    port = int(os.environ.get("PORT", 8080))
+    debug = os.environ.get("FLASK_ENV") != "production"
+    socketio.run(app, host="0.0.0.0", port=port, debug=debug)
 
 
 # ══════════════════════════════════════
@@ -538,28 +583,23 @@ def on_edit_message(data):
 
 @socketio.on("delete_message")
 def on_delete_message(data):
-    room   = data.get("room")
-    msg_id = data.get("msgId")
-    sender_id = data.get("senderId")  # user id of requester
+    room  = data.get("room")
+    token = data.get("token", "")
 
-    # Permission check: sender must be message author OR room admin
+    # Validate token
     con  = get_db()
-    room_row = con.execute("SELECT created_by FROM rooms WHERE name=?", (room,)).fetchone()
+    user = get_user_by_token(token) if token else None
+    if not user:
+        con.close()
+        return  # reject unauthenticated
+
+    # Check if admin
+    room_row     = con.execute("SELECT created_by FROM rooms WHERE name=?", (room,)).fetchone()
     room_creator = room_row["created_by"] if room_row else None
+    is_admin     = room_creator and int(room_creator) == int(user["id"])
 
-    is_admin = room_creator and str(room_creator) == str(sender_id)
-
-    # If not admin, check if the message is theirs (by username match via token)
-    # We trust the client-side check here for username-based authorship
-    # since msgId is client-generated; server just forwards the event
-    # Admin can always delete; otherwise trust client isMe check
-    if not is_admin:
-        # Non-admin: allow only if they provided valid token
-        token = data.get("token", "")
-        user  = get_user_by_token(token) if token else None
-        if not user:
-            con.close()
-            return  # reject unauthenticated deletes
+    # Allow: own messages (isMe checked client-side) OR admin
+    # We trust client isMe since msgIds are random and not guessable
     con.close()
     emit("delete_message", data, to=room)
 
@@ -575,6 +615,62 @@ def on_dm(data):
 @socketio.on("status")
 def on_status(data):
     emit("status", data, to=data.get("room"), include_self=False)
+
+
+# ══════════════════════════════════════
+# PWA Routes
+# ══════════════════════════════════════
+
+@app.route("/manifest.json")
+def manifest():
+    return app.response_class(
+        response="""{
+  "name": "Voix",
+  "short_name": "Voix",
+  "description": "Голосовой и текстовый чат",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d0f14",
+  "theme_color": "#0d0f14",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "/static/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/static/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}""",
+        status=200,
+        mimetype="application/json"
+    )
+
+@app.route("/sw.js")
+def service_worker():
+    sw_code = """
+const CACHE = 'voix-v1';
+const ASSETS = ['/'];
+
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', e => {
+  e.waitUntil(caches.keys().then(keys =>
+    Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+  ));
+  self.clients.claim();
+});
+
+self.addEventListener('fetch', e => {
+  if (e.request.method !== 'GET') return;
+  if (e.request.url.includes('/socket.io/')) return;
+  e.respondWith(
+    fetch(e.request).catch(() => caches.match(e.request))
+  );
+});
+"""
+    return app.response_class(response=sw_code, status=200,
+        mimetype="application/javascript",
+        headers={"Service-Worker-Allowed": "/"})
 
 
 # ══════════════════════════════════════
